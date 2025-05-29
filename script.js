@@ -12,22 +12,22 @@ function evaluateScore(event) {
   let fraction = score/maxscore;
   if (isNaN(score)) {
   	text = "please enter a valid numeric score producer-san";
-  	imgsrc = "https://i.imgur.com/u7X6VbA.gif";
+  	imgsrc = "img/harukaErr.gif";
   } else if (fraction < .20) {
   	text = "die";
-  	imgsrc = "https://bondsandgates.files.wordpress.com/2014/07/pic3.gif";
+  	imgsrc = "img/haruka1.gif";
   } else if (fraction < .40) {
   	text = "w-why... I know you're better than this producer-san";
-  	imgsrc = "https://formeinfullbloom.files.wordpress.com/2013/06/harukaamami.jpg";
+  	imgsrc = "img/haruka2.jpg";
   } else if (fraction < .60) {
   	text = "pls work a little harder producer-san";
-  	imgsrc = "https://pbs.twimg.com/media/CoaLO2JUEAAD1U8.jpg";
+  	imgsrc = "img/haruka3.jpg";
   } else if (fraction < .80) {
   	text = "not bad but you can do better next time producer-san";
-  	imgsrc = "https://i.imgur.com/E2ncdRP.gif";
+  	imgsrc = "img/haruka4.gif";
   } else {
   	text = "waow good job producer-san!!! (´・◡・｀)";
-  	imgsrc = "https://i.imgur.com/cIwbfuz.gif";
+  	imgsrc = "img/haruka5.gif";
   }
 
   document.getElementById("text").innerHTML = text;
