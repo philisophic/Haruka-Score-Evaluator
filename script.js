@@ -1,39 +1,89 @@
+class Profile {
+  constructor(name, homeResponse, responseThresholds, responseSet, errResponse) {
+    this.name = name;
+    this.homeResponse = new Response(homeResponse); // preloaded for quick switching
+    this.responseThresholds = responseThresholds;
+    this.responseSet = responseSet;
+    this.errResponse = errResponse;
+  }
+
+  preloadAssets() {
+    currentResponseSet = this.responseSet.map((response) => new Response(response));
+    currentErrResponse = new Response(this.errResponse);
+  }
+}
+
+class Response {
+  constructor(responseData) {
+    this.img = new Image();
+    this.img.src = responseData[0];
+
+    this.msg = responseData[1];
+    this.audio = new Audio(responseData[2]);
+  }
+
+  display() {
+    document.getElementById("response-img").firstElementChild.replaceWith(this.img);
+    document.getElementById("response-msg").innerHTML = this.msg;
+  }
+}
+
 function evaluateScore(event) {
   event.preventDefault();
 
+  // retrieve user input for score
   let score = document.getElementById("score").value;
   let maxscore = document.getElementById("maxscore").value;
-  if (isNaN(maxscore) || maxscore == "") {
+  if (isNaN(maxscore) || maxscore.trim() == "") {
   	maxscore = 100;
   }
-  let text;
-  let imgsrc;
 
-  let fraction = score/maxscore;
-  if (isNaN(score)) {
-  	text = "please enter a valid numeric score producer-san";
-  	imgsrc = "img/harukaErr.gif";
-  } else if (fraction < .20) {
-  	text = "die";
-  	imgsrc = "img/haruka1.gif";
-  } else if (fraction < .40) {
-  	text = "w-why... I know you're better than this producer-san";
-  	imgsrc = "img/haruka2.jpg";
-  } else if (fraction < .60) {
-  	text = "pls work a little harder producer-san";
-  	imgsrc = "img/haruka3.jpg";
-  } else if (fraction < .80) {
-  	text = "not bad but you can do better next time producer-san";
-  	imgsrc = "img/haruka4.gif";
+  // select appropriate response and display it
+  let response;
+
+  if (isNaN(score) || score.trim() == "") {
+    response = currentErrResponse;
   } else {
-  	text = "waow good job producer-san!!! (´・◡・｀)";
-  	imgsrc = "img/haruka5.gif";
+    let scoreFraction = score/maxscore;
+    let searchSuccess = false;
+
+    for (let i = 0; i < currentProfile.responseThresholds.length; i++) {
+      if (scoreFraction < currentProfile.responseThresholds[i]) {
+        response = currentResponseSet[i];
+        searchSuccess = true;
+        break;
+      }
+    }
+    if (!searchSuccess) { // greater than last threshold value
+      response = currentResponseSet[currentProfile.responseThresholds.length];
+    }
   }
 
-  document.getElementById("text").innerHTML = text;
-  document.getElementById("haruka").src = imgsrc;
+  response.display();
 }
 
+let haruka = new Profile(
+  "Haruka Amami",
+  ["img/haruka0.png", "tell haruka your test score and she will decide your fate"],
+  [0.2, 0.4, 0.6, 0.8],
+  [
+    ["img/haruka1.gif", "die"],
+    ["img/haruka2.jpg", "w-why... I know you're better than this producer-san"],
+    ["img/haruka3.jpg", "pls work a little harder producer-san"],
+    ["img/haruka4.gif", "not bad but you can do better next time producer-san"],
+    ["img/haruka5.gif", "waow good job producer-san!!! (´・◡・｀)"]
+  ],
+  ["img/harukaErr.gif", "please enter a valid numeric score producer-san"],
+);
+
+let currentProfile = haruka;
+
+let currentResponseSet;
+let currentErrResponse;
+
 window.onload = function() {
-	document.getElementById("myForm").addEventListener('submit', evaluateScore);
+  currentProfile.homeResponse.display();
+  currentProfile.preloadAssets();
+  
+  document.getElementById("myForm").addEventListener('submit', evaluateScore);
 };
