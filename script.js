@@ -62,6 +62,13 @@ function evaluateScore(event) {
   response.display();
 }
 
+function changeTheme() {
+  let newProfile = profiles[document.getElementById("theme").value];
+  newProfile.homeResponse.display();
+  newProfile.preloadAssets();
+  currentProfile = newProfile;
+}
+
 let haruka = new Profile(
   "Haruka Amami",
   ["img/haruka0.png", "tell haruka your test score and she will decide your fate"],
@@ -101,14 +108,25 @@ let currentResponseSet;
 let currentErrResponse;
 
 window.onload = function() {
+  // fill theme selection dropdown
+  for (let theme in profiles) {
+    let option = document.createElement("option");
+    option.value = theme;
+    option.innerHTML = profiles[theme].name;
+    document.getElementById("theme").appendChild(option); 
+  }
+
   // set appropriate theme if specified in url
-  let theme = (new URL(window.location.href)).searchParams.get("theme");
-  if (theme in profiles) {
-    currentProfile = profiles[theme];
+  let initialTheme = (new URL(window.location.href)).searchParams.get("theme");
+  if (initialTheme in profiles) {
+    currentProfile = profiles[initialTheme];
+    document.getElementById("theme").value = initialTheme;
   }
 
   currentProfile.homeResponse.display();
-  currentProfile.preloadAssets();
   
-  document.getElementById("myForm").addEventListener('submit', evaluateScore);
+  document.getElementById("myForm").addEventListener("submit", evaluateScore);
+  document.getElementById("theme").onchange = changeTheme;
+
+  currentProfile.preloadAssets();
 };
