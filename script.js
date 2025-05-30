@@ -76,12 +76,37 @@ let haruka = new Profile(
   ["img/harukaErr.gif", "please enter a valid numeric score producer-san"],
 );
 
+let suisei = new Profile(
+  "Hoshimachi Suisei",
+  ["img/suisei0.webp", "tell suisei your test score and she will decide your fate"],
+  [0.2, 0.4, 0.6, 0.8],
+  [
+    ["img/suisei1.gif", "you've yeed your last haw buddy"],
+    ["img/suisei2.gif", "c'mon man you can do better"],
+    ["img/suisei3.gif", "don't give up yet, fighto fighto"],
+    ["img/suisei4.gif", "not bad, but hoshiyomis gotta keep working hard!"],
+    ["img/suisei5.gif", "nice job, you're a rockstar!! ⋆｡°✩"]
+  ],
+  ["img/suiseiErr.gif", "are you sure that's a numeric score?"]
+);
+
+let profiles = {
+  "haruka": haruka,
+  "suisei": suisei
+}
+
 let currentProfile = haruka;
 
 let currentResponseSet;
 let currentErrResponse;
 
 window.onload = function() {
+  // set appropriate theme if specified in url
+  let theme = (new URL(window.location.href)).searchParams.get("theme");
+  if (theme in profiles) {
+    currentProfile = profiles[theme];
+  }
+
   currentProfile.homeResponse.display();
   currentProfile.preloadAssets();
   
